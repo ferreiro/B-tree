@@ -30,6 +30,21 @@ public class Node {
 	 * Getters method for private attributes. (good programming practise :P)
 	 */
 	
+	public void setN(int n) {
+		this.n = n;
+	}
+
+	public void setKeys(int[] keys) {
+		this.keys = keys;
+	}
+
+	public void setLeaf(boolean leaf) {
+		this.leaf = leaf;
+	}
+
+	public void setChildren(Node[] children) {
+		this.children = children;
+	}
 
 	public boolean isLeaf() { 
 		return this.leaf;
