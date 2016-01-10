@@ -4,9 +4,10 @@ public class Node {
 	public static final int MAX_CHILDREN = 20; // maximum children per node. Constant variable
 	
 	int n; 			// total number of keys stored in node
-	int keys[]; 	// keys stored in nondecreasing order (key1 < key2 < keyn)
+	int maxKeys;
+	int[] keys; 	// keys stored in nondecreasing order (key1 < key2 < keyn)
 	boolean leaf; 	// TRUE= Node is a Leaf | FALSE= Internal node.
-	Node children[]; // Pointers to its children ( [!] Leaf nodes have no children. Value undefined)
+	Node[] children; // Pointers to its children ( [!] Leaf nodes have no children. Value undefined)
 	
 	// Node Constructor:
 	// Create a new Node object.
@@ -17,6 +18,7 @@ public class Node {
 		this.n = 0; // 0 keys stored when creating a new Node.
 		this.keys = new int[ maximum_N_Keys ]; // size of the maximum keys for this particular Node.
 		this.leaf = leaf;
+		this.maxKeys = maximum_N_Keys;
 		
 		if ( ! leaf ) {
 			this.children = new Node[ maximum_N_Keys + 1 ]; // Node has children (and must be 1 more than total number of keys from parent )
@@ -34,17 +36,23 @@ public class Node {
 		this.n = n;
 	}
 
-	public void setKeys(int[] keys) {
-		this.keys = keys;
+	public void setKeyAt(int index, int value) {
+		this.keys[index] = value;
 	}
+	
+	public void setChildren(Node[] children) {
+		this.children = children;
+	}
+	
+	public void setChildrenAt( Node x, int index ) {
+		this.children[index] = x;
+	}
+	
 
 	public void setLeaf(boolean leaf) {
 		this.leaf = leaf;
 	}
 
-	public void setChildren(Node[] children) {
-		this.children = children;
-	}
 
 	public boolean isLeaf() { 
 		return this.leaf;
@@ -60,14 +68,19 @@ public class Node {
 	}
 	
 	public Node getChildrenAt( int index ) {
-		return this.children[index];
+		return this.children[index-1];
 	}
 	
 	// Return the total number of keys for 
 	// this Node.
-	public int getNumKeys() {
+	public int getN() {
 		return this.n;
 	}
+
+	public Node[] getChildren() {
+		return children;
+	}
+	
 
 	
 }

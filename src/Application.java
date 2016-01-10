@@ -24,8 +24,11 @@ public class Application {
 		
 		myTree = new BTree( n );
 		
-		// ToDO
-		// Insert...
+		// TODO
+		// Insert elements here...
+		// print
+		myTree.insert(3);
+		myTree.toString();
 		
 	}
 }
