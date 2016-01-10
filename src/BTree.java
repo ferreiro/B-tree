@@ -1,50 +1,46 @@
 
 public class BTree {
+	
+	// Elements for a BTree
+	private Node root = null;
+	private int size = 0; // number of Nodes in the tree
 
-	Node root; // Pointer to the root of the B-tree
-	int t; // Order. Every node has at most m children
- 
-	/*
-	 *  Constructor.
-	 *  Creates an empty Tree.
-	 *  
-	 *  n_keys se refiere a qué tipo de arbolB queremos hacer
-	 *  (si n_keys = 3, es un arbol de 3 keys por el primer nivel)
+	// Basic configuration of Tree Nodes
+	private int minKeySize; // min elements of a Key
+	private int maxKeySize; // maximum number of key elements
+	private int minChildrenSize; // min children depending on key total size
+	private int maxChildrenSize; // max Children accepted per Key
+	
+	/* 
+	 * Constructor. Create an empty Binary Tree
+	 * with the order pass by value.
 	 */
 	public BTree(int order) {
-		this.t = order;
-		this.root = new Node(true, order);
+	    this.minKeySize = order;
+	    this.minChildrenSize = minKeySize + 1;
+	    this.maxKeySize = 2 * minKeySize;
+	    this.maxChildrenSize = maxKeySize + 1;
+	    this.root = new Node(null, true, maxKeySize, maxChildrenSize);
 	}
-
 	
-	public Node getRoot() {
-		return root;
-	}
+	/**
+	 * Operations
+	 * 
+	 * Search: Look for an element in the tree.
+	 * Insert: Add an element to the tree. We accept duplicates values
+	 * Delete: Erase one element from tree
+	 */
 
-    private static class Entry {
-    	Node x;
-    	int index; // index of the key in the node.
-     
-        public Entry(Node x, int index) {
-        	this.x = x;
-        	this.index = index;
-        }
-    }
-	
-    /*
-     * Search a key given a subtree root.
-     * x = tree root.
-     * key = value to search
+    /**
+     * Does the tree contain the value.
      * 
-     * Total cost: t logt n
+     * @param value to locate in the tree.
+     * @return True if tree contains value.
      */
-	public Entry searchTree(Node x, int key) {
-		int i = 1;
-		
-		// Iterate until we have traverse all elements 
-		// or the key is lower or equal than the key to find
-		
-		while ( i <= x.getN() && key > x.getKeyAt( i ) )
+    public Entry search(Node x, int key) {
+    	int i = 1;
+    	
+    	while ( i <= x.getN() && key > x.getKeyAt( i ) )
 			i += 1; // Increase "i" (index) value by one
 
 		if ( i <= x.getN() && key == x.getKeyAt( i ) ) {
@@ -54,33 +50,46 @@ public class BTree {
 			return null; // Key not found :(
 		}
 		else {
-			Node children = x.getChildrenAt( i ); // Coger el array de todos los hijos de este nodo.
-			return searchTree( children, key ); // y llamar recursivamente a search con el hijo que tiene índice i
+			Node c = x.getChildrenAt( i ); // Get children from "x" at position "i"
+			return search( c, key ); // Llamar recursivamente a search con el hijo que está en el índice i
 		}
-	}
-	
-	public void insert(int key) {
-		Node r = this.root; // r == root
-		int t = this.t;
-		
+    }
+
+    /**
+     * Add value to the tree. Tree can contain multiple equal values.
+     * 
+     * @param value to add to the tree.
+     * @return True if successfully added to tree.
+     */
+    public void insert(int key) {
+    	Node r = this.root; // r == root
+    	int t = minChildrenSize;
+    			
 		if ( r.getN() ==  ((2 * t) - 1) ) {
 			
-			Node s = new Node(false, this.t );
-			this.root = s;
+			// Split the tree in 2 trees.
+			// s is going to be the parent for the 2 divided treess.
 			
-			s.setChildrenAt(r, 1);
-			s = splitChild(s, 1);
-			s = insertNonFull( s, key  );
+			Node s = new Node(null, false, this.maxKeySize, this.maxChildrenSize);
+			this.root = s; // s 
+			
+			s.setLeaf(false); // Root is not a leaf...
+			s.setN(0); // parent doesn't have any key. Only childs
+			s.setChildrenAt(1, r);
+			// TODO: set parent for r (now the parent is s)
+			
+			s = splitChild( s, 1 );
+			s = insertNonFull( s, key );
 		}
 		else {
 			insertNonFull( r, key );
 		}
-	}
-	
-	private Node insertNonFull(Node x, int k) {
+    }
+    
+    private Node insertNonFull(Node x, int k) {
 		
 		int i = x.getN();
-		int t = this.t; 
+		int t = this.minKeySize; 
 		
 		if ( x.isLeaf() ) {
 			// External Node. NO children.
@@ -109,53 +118,41 @@ public class BTree {
 			x = insertNonFull( x.getChildrenAt(i), k);
 		}
 		
+		this.size++; // We have insert one node.
 		return x;
 	}
 
-	private void setRoot(Node s) {
-		// TODO Auto-generated method stub
-		this.root = s;
-	}
-
-	/*
-	 * In this function you pass the node you want to split
-	 * and the ith position of the child where you want to split
-	 * This should be the middle of the keys of Node X.
-	 */
-	public Node splitChild( Node x, int i ) {
-		int t, n;
+    public Node splitChild(Node x, int i) {
+    	int t, n;
 		boolean leaf;
 		
+		t = this.minChildrenSize; // Set "t" using N variable from y
+
+		Node z = new Node(x, true, this.minKeySize, this. minChildrenSize);
 		Node y = x.getChildrenAt( i ); // Getting ith children on node x 
-		Node z = new Node( y.isLeaf(), this.t );
-		
-		t = this.t; // Set "t" using N variable from y
-		
-		n = ( t - 1 ); // nChildren = (keys of Y) - 1
-		z.setN(n);
+	
+		z.leaf = y.leaf;
+		z.setN(t - 1);
 		
 		for (int j = 1; j <=  t - 1; j++) {
-			int index_children = ( j + t );
-			int newKey = y.getKeyAt( index_children ); // Get value from the Y
+			int newKey = y.getKeyAt( j + t ); // Get value from the Y
 			z.setKeyAt(j, newKey); // Set value from Y on Z using j position
 		}
 		
 		if ( ! y.isLeaf() ) {
-			for (int j = 1; j <= ( t ); j++) {
-				int index_children = ( j + t );
-				Node newChildren = y.getChildrenAt( index_children );
-				z.setChildrenAt( newChildren, j );
+			for (int j = 1; j <= t; j++) {
+				Node newChildren = y.getChildrenAt( j + t );
+				z.setChildrenAt( j, newChildren );
 			}
 		}
 		
 		y.setN( t - 1 );
 		
 		for (int j = (x.getN() + 1); j >= ( i + 1 ); j--) {
-			Node children = x.getChildrenAt( j );
-			x.setChildrenAt( children, j + 1 ); // Swap to the right
+			x.setChildrenAt( j + 1, x.getChildrenAt(j) ); // Swap to the right
 		}
 		
-		x.setChildrenAt( z, i + 1 );
+		x.setChildrenAt( i + 1, z );
 		
 		for (int j = x.getN(); j >= ( i ); j--) {
 			int key =  x.getKeyAt( j );
@@ -167,45 +164,37 @@ public class BTree {
 		x.setN( 1 + x.getN() ); // linea 17
 		
 		return x;
-	}
-	
-	// TODO
-	// toString function to print the whole tree for testing purposes
-	
-	public String toString() {
-		String tree = "";
-		 
-		 printTree(root);
-		 
-		 for (int i = 1; i <= root.getN(); i++) {
-			 System.out.print("_" + root.getKeyAt(i));
-		 }
-		System.out.print("\n-------\n");
-		//printTree(this.root);
-		
-		return tree;
-	}
-	private void printTree(Node node) { 
-		 if (node == null) return;
-		 
-		 for (int i = 1; i <= node.getN(); i++) {
-			 System.out.print("_" + node.getKeyAt(i));
-		 }
-		 
-		 System.out.print("-\n");
-		 
-		 for (int i = 1; i <= node.getN(); i++) {
-			 Node c = node.getChildrenAt(i);
-			 if ( c == null ) {
-				 System.out.print("_L_");
-			 }
-			 else if ( c.isLeaf() ) {
-				 System.out.print("_L_");
-			 }
-			 else {
-				 printTree(c);
-			 }
-		 }
-	} 
-	
+    }
+    
+    /**
+     * Remove first occurrence of value in the tree.
+     * 
+     * @param value to remove from the tree.
+     * @return value removed from tree. (-1 if not found)
+     */
+    public int remove(int key) {
+    	return -1;
+    }
+    
+    public Node getRoot() {
+    	return this.root;
+    }
+    
+    @Override
+    public String toString() {
+    	String s = "";
+
+    	s += "size=  " + size + "\n";
+    	s += "Initial Node= \n";
+    	
+    	// System.out.println(root.toString());
+    	
+    	s += "minKeySize=  " + minKeySize + "\n";
+    	s += "maxKeySize=  " + maxKeySize + "\n";
+    	s += "minChildrenSize " + minChildrenSize + "\n";
+    	s += "maxChildrenSize " + maxChildrenSize + "\n";
+    	
+    	return s;
+    }
+    
 }

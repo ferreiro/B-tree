@@ -24,15 +24,35 @@ public class Application {
 		
 		myTree = new BTree( n );
 		
-		// TODO
-		// Insert elements here...
-		// print
+		System.out.println(myTree.toString());
+		myTree.insert(3);
+		myTree.insert(23);
+		myTree.insert(33);
+		myTree.insert(43);
+		myTree.insert(53);
+		myTree.insert(63);
+		System.out.println("3 inserted!");
+		System.out.println(myTree.toString());
+		
+		Entry e = myTree.search(myTree.getRoot(), 3);
+		
+		if (e == null) {
+			System.out.print("NUll");
+		}
+		else {
+			
+			System.out.println("Index" + e.getIndex());
+		}
+		
+		
+				
+		/*
 		myTree.insert(3);
 		myTree.toString();
 		myTree.insert(6);
 		myTree.toString();
 		myTree.insert(5);
 		myTree.toString();
-		
+		*/
 	}
 }

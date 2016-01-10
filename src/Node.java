@@ -1,104 +1,104 @@
+import java.lang.reflect.Array;
+import java.util.Arrays;
 
 public class Node {
-
-	int n; 			// total number of keys stored in node
-	// int maxKeys;	// Maximum number of keys that this node can have (>= 2).
-	int[] keys; 	// keys stored in nondecreasing order (key1 < key2 < keyn)
-	boolean leaf; 	// TRUE= Node is a Leaf | FALSE= Internal node.
+	private Node parent;
+	private int n; 						// keysSize. total number of keys stored in node
+	private int[] keys = null; 			// keys stored in nondecreasing order (key1 < key2 < keyn)
+	private Node[] children = null;		// Internal nodes attributes | Pointers to its children ( [!] Leaf nodes have no children. Value undefined)
+	private int childrenSize = 0;		// total number of inserted children
+	boolean leaf = true;				// Leaf= No childs
 	
-	Node[] children; // Internal nodes attributes | Pointers to its children ( [!] Leaf nodes have no children. Value undefined)
+	public Node(Node parent, boolean leaf, int maxKeySize, int maxChildrenSize) {
+        this.parent = parent;
+        this.n = 0; // Creating empty node with 0 keys.
+        this.keys = new int[maxKeySize + 1];
+        this.leaf = leaf;
+        
+        if ( !leaf ) {
+        	// Internal Node.
+        	this.children = new Node[maxChildrenSize + 1];
+            this.childrenSize = 0;
+        }
+        else
+        	this.children = null;
+    }
 	
-	/*
-	 * Constructor.
-	 * Creates a new node. If is an internal Node, creates a list of children
-	 * if the node is external (no children) initializes the children to null.
-	 */
-
-	public Node(boolean leaf, int t) {
-		this.n = 0;
-		this.keys = new int[ t ]; 			   // List of keys for this node
-		this.leaf = leaf;
-		
-		if ( leaf ) 
-			children = null; // External Node (leaf). NO CHILDREN!!Leaf nodes have no children. So children attribute is null
-		else
-			// Internal node.
-			// At least t children
-			// at most 2t children
-			children = new Node[ t ]; // Internal Node. It has childrens! Must be 1 unit greater than the total number of keys.
+	public boolean isLeaf() {
+		return (this.children == null);
 	}
-	
-	/*
-	public Node(boolean leaf, int maxKeys) {
-		this.n = 0;
-		//this.maxKeys = ((maxKeys >= 2) ? maxKeys : 2); // When maxKeys is lower than 2, we set the default keys a node must have 2. If the value is correct (>=2) we set the given value
-		this.keys = new int[ maxKeys ]; 			   // List of keys for this node
-		
-		if ( leaf ) children = null; // External Node (leaf). NO CHILDREN!!Leaf nodes have no children. So children attribute is null
-		else children = new Node[ maxKeys + 1 ]; // Internal Node. It has childrens! Must be 1 unit greater than the total number of keys.
-	}
-	*/
-	
-	/*
-	 * Getters method for private attributes. (good programming practise :P)
+
+	/**
+	 * Getters & Setters
 	 */
 	
-	public void setN(int n) {
-		this.n = n;
-	}
-
-	public void setKeyAt(int index, int value) {
-		this.keys[index-1] = value;
-	}
-	
-	public void setChildren(Node[] children) {
-		this.children = children;
-	}
-	
-	public void setChildrenAt( Node x, int index ) {
-		this.children[index-1] = x;
-	}
-	
-
-	public void setLeaf(boolean leaf) {
-		this.leaf = leaf;
-	}
-
-
-	public boolean isLeaf() { 
-		return this.leaf;
-	}
-	
-	// Get the key value on a given index position
-	// passed by parameter.
 	public int getKeyAt( int index ) {
-/*		if ( index < 0 || index > n ) {
-			return -1; // Error. Index out of the array limits
-		}*/
 		return this.keys[index-1];
 	}
 	
-	public Node getChildrenAt( int index ) {
-		if ( this.children == null ) {
-			return null;
-		}
-		return this.children[index-1];
-	}
-	
-	// Return the total number of keys for 
-	// this Node.
-	public int getN() {
-		return this.n;
-	}
-	/*
-	public int getMaxKeys() {
-		return this.maxKeys;
-	}
-	*/
-	public Node[] getChildren() {
-		return children;
+	public void setKeyAt( int index, int value ) {
+		this.keys[index-1] = value;
 	}
 	
 
+	public void setLeaf( boolean leaf ) {
+		this.leaf = leaf;
+	}
+	
+	public void setN( int n ) {
+		this.n = n;
+	}
+	
+
+	public Node getChildrenAt( int index ) {
+		return this.children[index-1];
+	}
+
+	public void setChildrenAt( int index, Node child ) {
+		this.children[index-1] = child;
+		this.childrenSize++;
+	}
+	
+	public int getN() {
+		return this.n;
+	}
+	
+	/*
+	public void addKey( int value ) {
+		if ( keys.length == n ) {
+			System.out.println("The key's array is full. Can not add here");
+			return;
+		}
+		keys[n++] = value;
+		Arrays.sort(keys, 0, n); // Sort in nondecreasing order (Arguments: array, fromIndex, toIndex)
+	}
+	*/
+	
+    @Override
+    public String toString() {
+    	String s = "";
+    	/*
+    	s += "size=  " + parent.toString() + "\n";
+    	s += "Initial Node=  " + this.n + "\n";
+    	
+		s += "Keys=  " + "\n"; 
+    	for (int i = 0; i < this.keys.length; i++) {
+    		s += keys[i] + " ";
+    	} 
+    	
+		s += "\n";
+		s += "Children" + "\n"; 
+    	for (int i = 0; i < this.children.length; i++) {
+    		s += children[i] + " ";
+    	} 
+		s += "\n";
+		
+    	s += "maxKeySize=  " + this.children + "\n";
+    	s += "minChildrenSize " + this.childrenSize + "\n";
+    	s += "maxChildrenSize " + this.leaf + "\n";
+    	*/
+    	return s;
+    }
+	
 	
 }
