@@ -1,7 +1,20 @@
 
 public class BTree {
+	
 	Node root;
 	
+	
+	/*
+	 *  Constructor.
+	 *  Creates an empty Tree.
+	 *  
+	 *  n_keys se refiere a qué tipo de arbolB queremos hacer
+	 *  (si n_keys = 3, es un arbol de 3 keys por el primer nivel)
+	 */
+	public BTree(int n_keys) {
+		boolean leaf = true; // We don't have any children when creating the first root.
+		this.root = new Node( leaf, n_keys ); // Creating root. true=  and second parameter is the total number of keys can have (2 at the beginning)
+	}
 
     // internal nodes: only use key and next
     // external nodes: only use key and value
@@ -19,8 +32,10 @@ public class BTree {
      * Search a key given a subtree root.
      * x = tree root.
      * key = value to search
+     * 
+     * Total cost: t logt n
      */
-	public Entry search(Node x, int key) {
+	public Entry searchTree(Node x, int key) {
 		int i = 1;
 		
 		// Iterate until we have traverse all elements 
