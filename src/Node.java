@@ -20,12 +20,15 @@ public class Node {
 		this.leaf = leaf;
 		this.maxKeys = maximum_N_Keys;
 		
+		this.children = new Node[ maximum_N_Keys + 1 ]; // Node has children (and must be 1 more than total number of keys from parent )
+		/*
 		if ( ! leaf ) {
 			this.children = new Node[ maximum_N_Keys + 1 ]; // Node has children (and must be 1 more than total number of keys from parent )
 		}
 		else {
 			this.children = null; // [!] Leaf nodes have no children. Value undefined)
 		}
+		*/
 	}
 	
 	/*
@@ -37,7 +40,7 @@ public class Node {
 	}
 
 	public void setKeyAt(int index, int value) {
-		this.keys[index] = value;
+		this.keys[index-1] = value;
 	}
 	
 	public void setChildren(Node[] children) {
@@ -45,7 +48,7 @@ public class Node {
 	}
 	
 	public void setChildrenAt( Node x, int index ) {
-		this.children[index] = x;
+		this.children[index-1] = x;
 	}
 	
 
@@ -61,13 +64,16 @@ public class Node {
 	// Get the key value on a given index position
 	// passed by parameter.
 	public int getKeyAt( int index ) {
-		if ( index < 0 || index > n ) {
+/*		if ( index < 0 || index > n ) {
 			return -1; // Error. Index out of the array limits
-		}
-		return this.keys[index];
+		}*/
+		return this.keys[index-1];
 	}
 	
 	public Node getChildrenAt( int index ) {
+		if ( this.children == null ) {
+			return null;
+		}
 		return this.children[index-1];
 	}
 	
@@ -75,6 +81,10 @@ public class Node {
 	// this Node.
 	public int getN() {
 		return this.n;
+	}
+	
+	public int getMaxKeys() {
+		return this.maxKeys;
 	}
 
 	public Node[] getChildren() {

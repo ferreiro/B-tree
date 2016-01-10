@@ -60,11 +60,11 @@ public class BTree {
 	
 	public void insert(int key) {
 		Node r = this.getRoot(); // r == root
-		int t = r.getMaxKeys();
+		int t = r.getN();
 		
 		if ( r.getN() ==  ((2 * t) - 1) ) {
 			
-			Node s = new Node(false, root.getN() );
+			Node s = new Node(false, root.getMaxKeys() );
 			this.root = s;
 			
 			s.setChildrenAt(r, 1);
@@ -123,16 +123,16 @@ public class BTree {
 	public Node splitChild( Node x, int i ) {
 		int t, n;
 		boolean leaf;
-		 
+		
 		Node y = x.getChildrenAt( i ); // Getting ith children on node x 
-		t = y.getN(); // Set "t" using N variable from y
+		Node z = new Node( y.isLeaf(), y.getMaxKeys() );
+		
+		t = y.getMaxKeys(); // Set "t" using N variable from y
 		
 		n = ( t - 1 ); // nChildren = (keys of Y) - 1
-		leaf = y.isLeaf(); 
-
-		Node z = new Node( leaf, n );
+		z.setN(n);
 		
-		for (int j = 1; j <= ( t - 1 ); j++) {
+		for (int j = 1; j <=  t - 1; j++) {
 			int index_children = ( j + t );
 			int newKey = y.getKeyAt( index_children ); // Get value from the Y
 			z.setKeyAt(j, newKey); // Set value from Y on Z using j position
@@ -172,8 +172,14 @@ public class BTree {
 	
 	public String toString() {
 		String tree = "";
-		
-		printTree(this.root);
+		 
+		 printTree(root);
+		 
+		 for (int i = 1; i <= root.getN(); i++) {
+			 System.out.print("_" + root.getKeyAt(i));
+		 }
+		System.out.print("\n-------\n");
+		//printTree(this.root);
 		
 		return tree;
 	}
@@ -184,8 +190,19 @@ public class BTree {
 			 System.out.print("_" + node.getKeyAt(i));
 		 }
 		 
+		 System.out.print("-\n");
+		 
 		 for (int i = 1; i <= node.getN(); i++) {
-			 printTree(node.getChildrenAt(i));
+			 Node c = node.getChildrenAt(i);
+			 if ( c == null ) {
+				 System.out.print("_L_");
+			 }
+			 else if ( c.isLeaf() ) {
+				 System.out.print("_L_");
+			 }
+			 else {
+				 printTree(c);
+			 }
 		 }
 	} 
 	

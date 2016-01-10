@@ -27,7 +27,9 @@ public class Application {
 		// TODO
 		// Insert elements here...
 		// print
-		myTree.insert(3);
+		myTree.insert(3); 
+		myTree.insert(6); 
+		myTree.insert(5);
 		myTree.toString();
 		
 	}
