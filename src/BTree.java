@@ -52,7 +52,7 @@ public class BTree {
 		}
 		else {
 			Node children = x.getChildrenAt( i ); // Coger el array de todos los hijos de este nodo.
-			return search( children, key ); // y llamar recursivamente a search con el hijo que tiene índice i
+			return searchTree( children, key ); // y llamar recursivamente a search con el hijo que tiene índice i
 		}
 	}
 	
