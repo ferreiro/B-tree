@@ -1,35 +1,43 @@
 
 public class Node {
 
-	public static final int MAX_CHILDREN = 20; // maximum children per node. Constant variable
-	
 	int n; 			// total number of keys stored in node
-	int maxKeys;
+	// int maxKeys;	// Maximum number of keys that this node can have (>= 2).
 	int[] keys; 	// keys stored in nondecreasing order (key1 < key2 < keyn)
 	boolean leaf; 	// TRUE= Node is a Leaf | FALSE= Internal node.
-	Node[] children; // Pointers to its children ( [!] Leaf nodes have no children. Value undefined)
 	
-	// Node Constructor:
-	// Create a new Node object.
-	// Taking into account parameters passed on constructor calling.
-	// maximumKeys = total number of keys for this level
+	Node[] children; // Internal nodes attributes | Pointers to its children ( [!] Leaf nodes have no children. Value undefined)
 	
-	public Node(boolean leaf, int maximum_N_Keys ) {
-		this.n = 0; // 0 keys stored when creating a new Node.
-		this.keys = new int[ maximum_N_Keys ]; // size of the maximum keys for this particular Node.
+	/*
+	 * Constructor.
+	 * Creates a new node. If is an internal Node, creates a list of children
+	 * if the node is external (no children) initializes the children to null.
+	 */
+
+	public Node(boolean leaf, int t) {
+		this.n = 0;
+		this.keys = new int[ t ]; 			   // List of keys for this node
 		this.leaf = leaf;
-		this.maxKeys = maximum_N_Keys;
 		
-		this.children = new Node[ maximum_N_Keys + 1 ]; // Node has children (and must be 1 more than total number of keys from parent )
-		/*
-		if ( ! leaf ) {
-			this.children = new Node[ maximum_N_Keys + 1 ]; // Node has children (and must be 1 more than total number of keys from parent )
-		}
-		else {
-			this.children = null; // [!] Leaf nodes have no children. Value undefined)
-		}
-		*/
+		if ( leaf ) 
+			children = null; // External Node (leaf). NO CHILDREN!!Leaf nodes have no children. So children attribute is null
+		else
+			// Internal node.
+			// At least t children
+			// at most 2t children
+			children = new Node[ t ]; // Internal Node. It has childrens! Must be 1 unit greater than the total number of keys.
 	}
+	
+	/*
+	public Node(boolean leaf, int maxKeys) {
+		this.n = 0;
+		//this.maxKeys = ((maxKeys >= 2) ? maxKeys : 2); // When maxKeys is lower than 2, we set the default keys a node must have 2. If the value is correct (>=2) we set the given value
+		this.keys = new int[ maxKeys ]; 			   // List of keys for this node
+		
+		if ( leaf ) children = null; // External Node (leaf). NO CHILDREN!!Leaf nodes have no children. So children attribute is null
+		else children = new Node[ maxKeys + 1 ]; // Internal Node. It has childrens! Must be 1 unit greater than the total number of keys.
+	}
+	*/
 	
 	/*
 	 * Getters method for private attributes. (good programming practise :P)
@@ -82,11 +90,11 @@ public class Node {
 	public int getN() {
 		return this.n;
 	}
-	
+	/*
 	public int getMaxKeys() {
 		return this.maxKeys;
 	}
-
+	*/
 	public Node[] getChildren() {
 		return children;
 	}

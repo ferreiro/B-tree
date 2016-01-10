@@ -1,13 +1,9 @@
 
 public class BTree {
-	
-	public Node getRoot() {
-		return root;
-	}
 
-	Node root;
-	
-	
+	Node root; // Pointer to the root of the B-tree
+	int t; // Order. Every node has at most m children
+ 
 	/*
 	 *  Constructor.
 	 *  Creates an empty Tree.
@@ -15,9 +11,14 @@ public class BTree {
 	 *  n_keys se refiere a qué tipo de arbolB queremos hacer
 	 *  (si n_keys = 3, es un arbol de 3 keys por el primer nivel)
 	 */
-	public BTree(int n_keys) {
-		boolean leaf = true; // We don't have any children when creating the first root.
-		this.root = new Node( leaf, n_keys ); // Creating root. true=  and second parameter is the total number of keys can have (2 at the beginning)
+	public BTree(int order) {
+		this.t = order;
+		this.root = new Node(true, order);
+	}
+
+	
+	public Node getRoot() {
+		return root;
 	}
 
     private static class Entry {
@@ -59,12 +60,12 @@ public class BTree {
 	}
 	
 	public void insert(int key) {
-		Node r = this.getRoot(); // r == root
-		int t = r.getN();
+		Node r = this.root; // r == root
+		int t = this.t;
 		
 		if ( r.getN() ==  ((2 * t) - 1) ) {
 			
-			Node s = new Node(false, root.getMaxKeys() );
+			Node s = new Node(false, this.t );
 			this.root = s;
 			
 			s.setChildrenAt(r, 1);
@@ -72,15 +73,18 @@ public class BTree {
 			s = insertNonFull( s, key  );
 		}
 		else {
-			insertNonFull( r, key  );
+			insertNonFull( r, key );
 		}
 	}
 	
 	private Node insertNonFull(Node x, int k) {
 		
 		int i = x.getN();
+		int t = this.t; 
 		
 		if ( x.isLeaf() ) {
+			// External Node. NO children.
+			
 			while ( i >= 1 && k < x.getKeyAt( i ) ) {
 				int value = x.getKeyAt( i );
 				x.setKeyAt( i + 1 , value );
@@ -96,9 +100,7 @@ public class BTree {
 			}
 			
 			i += 1;
-			
-			int t = x.getN(); 
-			
+				
 			if ( x.getChildrenAt(i).getN() == ((2 * t) - 1) ) {
 				x = splitChild( x, i );
 				if ( k > x.getKeyAt(i) )
@@ -125,9 +127,9 @@ public class BTree {
 		boolean leaf;
 		
 		Node y = x.getChildrenAt( i ); // Getting ith children on node x 
-		Node z = new Node( y.isLeaf(), y.getMaxKeys() );
+		Node z = new Node( y.isLeaf(), this.t );
 		
-		t = y.getMaxKeys(); // Set "t" using N variable from y
+		t = this.t; // Set "t" using N variable from y
 		
 		n = ( t - 1 ); // nChildren = (keys of Y) - 1
 		z.setN(n);
