@@ -60,7 +60,7 @@ public class BTree {
 	
 	public void insert(int key) {
 		Node r = this.getRoot(); // r == root
-		int t = r.getN();
+		int t = r.getMaxKeys();
 		
 		if ( r.getN() ==  ((2 * t) - 1) ) {
 			
