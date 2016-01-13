@@ -1,103 +1,123 @@
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Vector;
 
 public class Node {
-	private Node parent;
-	private int n; 						// keysSize. total number of keys stored in node
-	private Vector<Integer> keys = null;// keys stored in nondecreasing order (key1 < key2 < keyn)
-	private Node[] children = null;		// Internal nodes attributes | Pointers to its children ( [!] Leaf nodes have no children. Value undefined)
-	private int childrenSize = 0;		// total number of inserted children
+
+	private int t; // Minimum size
+	private int n; // keysSize. total number of keys stored in node
+	private int[] keys = null;  // keys stored in nondecreasing order (key1 < key2 < keyn)
+	private Node[] children = null; // Vector of Nodes - Internal nodes attributes | Pointers to its children ( [!] Leaf nodes have no children. Value undefined)
+	private int nChildren;
 	boolean leaf = true;				// Leaf= No childs
 	
-	public Node(Node parent, boolean leaf, int maxKeySize, int maxChildrenSize) {
-        this.parent = parent;
-        this.n = 0; // Creating empty node with 0 keys.
-        this.keys = new int[maxKeySize];
-        this.leaf = leaf;
-
-        if ( !leaf ) {
-        	// Internal Node.
-        	this.children = new Node[maxChildrenSize];
-            this.childrenSize = 0;
-        }
-        else
-        	this.children = null;
-    }
-	
-	public boolean isLeaf() {
-		return (this.children == null);
-	}
-
-	/**
-	 * Getters & Setters
-	 */
-	
-	public int getKeyAt( int index ) {
-		return this.keys[index-1];
-	}
-	
-	public void setKeyAt( int index, int value ) {
-		this.keys[index-1] = value;
-	}
-	
-
-	public void setLeaf( boolean leaf ) {
+	public Node(boolean leaf, int t) {
+		int maxKeySize, maxChildrenSize;
+		
+		maxKeySize = (2 * t) - 1;
+		maxChildrenSize = (2 * t);
+		
+		this.t = t;
+		this.n = 0;
+		this.nChildren = 0;
 		this.leaf = leaf;
+		this.keys = new int[maxKeySize];
+		this.children = new Node[maxChildrenSize];
 	}
 	
-	public void setN( int n ) {
-		this.n = n;
+	public Node(boolean leaf, int maxKeySize, int maxChildrenSize) {
+        this.n = 0; // Creating empty node with 0 keys.
+        this.nChildren = 0;
+        this.leaf = leaf;
+		this.keys = new int[maxKeySize];
+		this.children = new Node[maxChildrenSize];
+    }
+
+	///////////////////////////////////////////////
+	///////////// Auxiliary functions /////////////
+	///////////////////////////////////////////////
+
+	public boolean isFullChildren() {
+		return (n == (2 * t));
 	}
 	
-
-	public Node getChildrenAt( int index ) {
-		return this.children[index-1];
+	public boolean isFullKeys() {
+		return (n == ((2 * t) - 1));
 	}
-
-	public void setChildrenAt( int index, Node child ) {
-		this.children[index-1] = child;
-		this.childrenSize++;
+	
+	public void increaseN() {
+		this.n++;
 	}
 	
 	public int getN() {
 		return this.n;
 	}
-	
-	/*
-	public void addKey( int value ) {
-		if ( keys.length == n ) {
-			System.out.println("The key's array is full. Can not add here");
-			return;
-		}
-		keys[n++] = value;
-		Arrays.sort(keys, 0, n); // Sort in nondecreasing order (Arguments: array, fromIndex, toIndex)
+
+	public boolean isLeaf() {
+		return this.leaf;
 	}
-	*/
+	
+	///////////////////////////////////////////////
+	///////////// Getters and Setters /////////////
+	///////////////////////////////////////////////
+
+	// Keys. Get and set one key in the array.
+
+	public void setNumberKeys( int n ) {
+		this.n = n; 
+	}
+	
+	public void setKeyAt( int index, int value ) {
+		this.keys[index-1] = value;
+	}
+
+	public int getKeyAt( int index ) {
+		return this.keys[index-1];
+	}
+
+	// Children. Get and set one children in the array.
+
+	public Node getChildrenAt( int index ) {
+		return this.children[index-1];
+	}
+
+	public void setChildrenAt( int index, Node children ) {
+		this.children[index-1] = children;
+		this.nChildren++;
+	}
+	
+	// Leaf
+
+	public void setLeaf( boolean leaf ) {
+		this.leaf = leaf;
+	}
+	
+	///////////////////////////////////////////////
+	////////////////// Printers ///////////////////
+	///////////////////////////////////////////////
+	
+	public String nodeToString(Node n) {
+		String nodeStr = "";
+		
+		// Print Keys (if there are keys)
+		if (n.getN() > 0) {
+			for (int i = 0; i < n.getN(); i++) {
+				nodeStr += n.getKeyAt(i);
+				nodeStr += " ,";
+			}
+		}
+		
+		for (int i = 0; i < n.nChildren; i++) {
+			if (n.isLeaf()) {
+				nodeStr += nodeToString(n.children[i]);
+			}
+			nodeStr += n.getKeyAt(i);
+			nodeStr += " ,";
+		}
+		
+		return nodeStr;
+	}
 	
     @Override
     public String toString() {
-    	String s = "";
-    	/*
-    	s += "size=  " + parent.toString() + "\n";
-    	s += "Initial Node=  " + this.n + "\n";
-    	
-		s += "Keys=  " + "\n"; 
-    	for (int i = 0; i < this.keys.length; i++) {
-    		s += keys[i] + " ";
-    	} 
-    	
-		s += "\n";
-		s += "Children" + "\n"; 
-    	for (int i = 0; i < this.children.length; i++) {
-    		s += children[i] + " ";
-    	} 
-		s += "\n";
-		
-    	s += "maxKeySize=  " + this.children + "\n";
-    	s += "minChildrenSize " + this.childrenSize + "\n";
-    	s += "maxChildrenSize " + this.leaf + "\n";
-    	*/
+    	String s = nodeToString(this);
     	return s;
     }
 	

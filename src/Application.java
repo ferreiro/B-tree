@@ -3,13 +3,31 @@ import java.util.Scanner;
 public class Application {
 	public static void main(String args[]) {
 		
-		int n = -1;
-		boolean correct = false;
 		BTree myTree;
-		Scanner in = new Scanner(System.in);
+		int n = -1, toInsert = -1;
 		
+		n = 4; // There is an example on page 496 from cormen, where the t=4
+		toInsert = 100000;
+		myTree = new BTree( n );
+		
+		long time = System.nanoTime(); // Start counting
+		
+		for (int i = 0; i < toInsert; i++) {
+			double newKey = Math.random();
+			myTree.insert((int) newKey);
+		}
+		
+		time = System.nanoTime() - (time); // Stop counting time
+		System.out.println("Time slaped " + time);
+		
+		System.out.println(toInsert + " inserted!");
+		//System.out.println(myTree.toString());
+		
+
 		/*
+		boolean correct = false;
 		System.out.println("Hi Teacher! Welcome to my program!");
+		Scanner in = new Scanner(System.in);
 		
 		do {
 			
@@ -24,43 +42,5 @@ public class Application {
 		} while ( ! correct );
 		*/
 		
-		n = 4; // There is an example on page 496 from cormen, where the t=4
-		myTree = new BTree( n );
-		
-		System.out.println(myTree.toString());
-		
-		myTree.insert(3);
-		myTree.insert(23);
-		myTree.insert(33);
-		myTree.insert(43);
-		myTree.insert(53);
-		myTree.insert(63);
-		myTree.insert(80);
-		
-		myTree.insert(83);
-
-		System.out.println("3 inserted!");
-		System.out.println(myTree.toString());
-		
-		Entry e = myTree.search(myTree.getRoot(), 3);
-		
-		if (e == null) {
-			System.out.print("NUll");
-		}
-		else {
-			
-			System.out.println("Index" + e.getIndex());
-		}
-		
-		
-				
-		/*
-		myTree.insert(3);
-		myTree.toString();
-		myTree.insert(6);
-		myTree.toString();
-		myTree.insert(5);
-		myTree.toString();
-		*/
 	}
 }
