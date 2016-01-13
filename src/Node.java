@@ -1,10 +1,11 @@
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Vector;
 
 public class Node {
 	private Node parent;
 	private int n; 						// keysSize. total number of keys stored in node
-	private int[] keys = null; 			// keys stored in nondecreasing order (key1 < key2 < keyn)
+	private Vector<Integer> keys = null;// keys stored in nondecreasing order (key1 < key2 < keyn)
 	private Node[] children = null;		// Internal nodes attributes | Pointers to its children ( [!] Leaf nodes have no children. Value undefined)
 	private int childrenSize = 0;		// total number of inserted children
 	boolean leaf = true;				// Leaf= No childs
@@ -12,12 +13,12 @@ public class Node {
 	public Node(Node parent, boolean leaf, int maxKeySize, int maxChildrenSize) {
         this.parent = parent;
         this.n = 0; // Creating empty node with 0 keys.
-        this.keys = new int[maxKeySize + 1];
+        this.keys = new int[maxKeySize];
         this.leaf = leaf;
-        
+
         if ( !leaf ) {
         	// Internal Node.
-        	this.children = new Node[maxChildrenSize + 1];
+        	this.children = new Node[maxChildrenSize];
             this.childrenSize = 0;
         }
         else

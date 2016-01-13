@@ -8,6 +8,7 @@ public class Application {
 		BTree myTree;
 		Scanner in = new Scanner(System.in);
 		
+		/*
 		System.out.println("Hi Teacher! Welcome to my program!");
 		
 		do {
@@ -21,16 +22,23 @@ public class Application {
 				System.err.println("Hey! The B-tree size must be greater than 2!");
 			
 		} while ( ! correct );
+		*/
 		
+		n = 4; // There is an example on page 496 from cormen, where the t=4
 		myTree = new BTree( n );
 		
 		System.out.println(myTree.toString());
+		
 		myTree.insert(3);
 		myTree.insert(23);
 		myTree.insert(33);
 		myTree.insert(43);
 		myTree.insert(53);
 		myTree.insert(63);
+		myTree.insert(80);
+		
+		myTree.insert(83);
+
 		System.out.println("3 inserted!");
 		System.out.println(myTree.toString());
 		

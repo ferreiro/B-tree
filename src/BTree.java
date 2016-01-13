@@ -1,26 +1,31 @@
 
 public class BTree {
 	
-	// Elements for a BTree
 	private Node root = null;
 	private int size = 0; // number of Nodes in the tree
 
 	// Basic configuration of Tree Nodes
-	private int minKeySize; // min elements of a Key
-	private int maxKeySize; // maximum number of key elements
-	private int minChildrenSize; // min children depending on key total size
-	private int maxChildrenSize; // max Children accepted per Key
-	
-	/* 
-	 * Constructor. Create an empty Binary Tree
-	 * with the order pass by value.
-	 */
+    // Default to 2-3 Tree
+    private int minimumDegree = 1; // min elements of a Key
+    private int maximumDegree = 2 * minimumDegree; // maximum number of key elements
+    private int minimumChildrenDegree = minimumDegree + 1; // min children depending on key total size
+    private int maximumChildrenDregree = minimumDegree + 1; // max Children accepted per Key
+
+    /**
+     * Constructor for B-Tree of ordered parameter. 
+     * Order means minimum number of keys in a non-root node.
+     * 
+     * @param order
+     *            of the B-Tree.
+     */
 	public BTree(int order) {
-	    this.minKeySize = order;
-	    this.minChildrenSize = minKeySize + 1;
-	    this.maxKeySize = 2 * minKeySize;
-	    this.maxChildrenSize = maxKeySize + 1;
-	    this.root = new Node(null, true, maxKeySize, maxChildrenSize);
+		if (order > 2) {
+		    this.minimumDegree = order;
+		    this.maximumDegree = (2 * minimumDegree) - 1; // an internal node may have at most 2t children
+		    this.minimumChildrenDegree = minimumDegree + 1;
+		    this.maximumChildrenDregree = maximumDegree + 1;
+		}
+	    this.root = new Node(null, true, maximumDegree, maximumChildrenDregree);
 	}
 	
 	/**
@@ -63,14 +68,14 @@ public class BTree {
      */
     public void insert(int key) {
     	Node r = this.root; // r == root
-    	int t = minChildrenSize;
+    	int t = minimumDegree;
     			
 		if ( r.getN() ==  ((2 * t) - 1) ) {
 			
 			// Split the tree in 2 trees.
 			// s is going to be the parent for the 2 divided treess.
 			
-			Node s = new Node(null, false, this.maxKeySize, this.maxChildrenSize);
+			Node s = new Node(null, false, this.maximumDegree, this.maximumChildrenDregree);
 			this.root = s; // s 
 			
 			s.setLeaf(false); // Root is not a leaf...
@@ -89,7 +94,7 @@ public class BTree {
     private Node insertNonFull(Node x, int k) {
 		
 		int i = x.getN();
-		int t = this.minKeySize; 
+		int t = this.minimumDegree; 
 		
 		if ( x.isLeaf() ) {
 			// External Node. NO children.
@@ -126,9 +131,9 @@ public class BTree {
     	int t, n;
 		boolean leaf;
 		
-		t = this.minChildrenSize; // Set "t" using N variable from y
+		t = this.minimumChildrenDegree; // Set "t" using N variable from y
 
-		Node z = new Node(x, true, this.minKeySize, this. minChildrenSize);
+		Node z = new Node(x, true, this.minimumDegree, this. minimumChildrenDegree);
 		Node y = x.getChildrenAt( i ); // Getting ith children on node x 
 	
 		z.leaf = y.leaf;
@@ -189,10 +194,10 @@ public class BTree {
     	
     	// System.out.println(root.toString());
     	
-    	s += "minKeySize=  " + minKeySize + "\n";
-    	s += "maxKeySize=  " + maxKeySize + "\n";
-    	s += "minChildrenSize " + minChildrenSize + "\n";
-    	s += "maxChildrenSize " + maxChildrenSize + "\n";
+    	s += "minKeySize=  " + minimumDegree + "\n";
+    	s += "maxKeySize=  " + maximumDegree + "\n";
+    	s += "minChildrenSize " + minimumChildrenDegree + "\n";
+    	s += "maxChildrenSize " + maximumChildrenDregree + "\n";
     	
     	return s;
     }
